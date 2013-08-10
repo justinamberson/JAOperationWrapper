@@ -51,7 +51,8 @@ JADropboxUploadWrapper *wrapper = [JADropboxUploadWrapper uploaderWithPaths:file
         NSLog(@"Error Received: %@",[error localizedDescription]);
     }];
 //Perform the upload    
-[wrapper upload]; //You must call this method ```html
+[wrapper upload]; //You must call this method
+```
 
 Wrapper classes should conform to that spec. They should offer block based callbacks, one for monitoring progress, one for completion, and one for error. They should not begin automatically and instead offer a method called upload to begin.
 
