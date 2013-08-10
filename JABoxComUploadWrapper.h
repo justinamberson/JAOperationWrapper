@@ -39,7 +39,7 @@ typedef void (^JABoxComUploadProgressBlock)(NSMutableDictionary *uploadInfo);
 /*
  NSMutableDictionary *pathsDictionary - should contain objects with these keys:
  NSString *const JAFileUploadNameKey
- NSString *const JAFileUploadRemotePathKey
+ NSString *const JAFileUploadRemotePathKey - Supply the "parent ID" here. See box.com documentation
  NSString *const JAFileUploadPathIDKey
  NSString *const JAFileUploadLocalPathKey */
 @property (nonatomic,strong) NSMutableDictionary *pathsDictionary;

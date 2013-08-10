@@ -60,6 +60,7 @@
     NSString *localPath = [_pathsDictionary objectForKey:JAFileUploadLocalPathKey];
     NSString *fileName = [_pathsDictionary objectForKey:JAFileUploadNameKey];
     NSString *fileID = [_pathsDictionary objectForKey:JAFileUploadPathIDKey];
+    NSString *parentID = [_pathsDictionary objectForKey:JAFileUploadRemotePathKey];
     BoxFileBlock fileBlock = ^(BoxFile *file)
     {
         NSString *pathID = [file.rawResponseJSON objectForKey:@"id"];
@@ -86,8 +87,11 @@
 
     BoxFilesRequestBuilder *builder = [[BoxFilesRequestBuilder alloc] init];
     builder.name = fileName;
-    builder.parentID = BoxAPIFolderIDRoot;
-    
+    if (parentID) {
+    	builder.parentID = parentID;
+	} else {
+		builder.parentID = BoxAPIFolderIDRoot;
+    }
     NSInputStream *inputStream = [NSInputStream inputStreamWithFileAtPath:localPath];
     NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:localPath error:nil];
     long long contentLength = [[fileAttributes objectForKey:NSFileSize] longLongValue];

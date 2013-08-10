@@ -38,7 +38,8 @@ typedef void (^JABoxComCheckerFailedBlock)(NSError *error);
 /*
  NSMutableDictionary *pathsDictionary - should contain objects with these keys:
  NSString *const JAFileUploadNameKey
- NSString *const JAFileUploadRemotePathKey */
+ NSString *const JAFileUploadRemotePathKey - Please use the "parent ID", see Box.com documentation
+ */
 @property (nonatomic,strong) NSMutableDictionary *pathsDictionary;
 
 /*

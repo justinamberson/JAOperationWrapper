@@ -53,6 +53,7 @@
 }
 
 -(void)checkFile {
+	NSString *parentID = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
     NSString *remotePath = [self.pathsDictionary objectForKey:JAFileUploadNameKey];
     _isChecking = YES;
     BoxCollectionBlock checkSuccessBlock = ^(BoxCollection *collection) {
@@ -75,8 +76,11 @@
         _isChecking = NO;
     };
     BoxFoldersRequestBuilder *checker = [[BoxFoldersRequestBuilder alloc]init];
-    [[BoxSDK sharedSDK].foldersManager folderItemsWithID:BoxAPIFolderIDRoot requestBuilder:checker success:checkSuccessBlock failure:checkFailBlock];
-
+    if (parentID) {
+    	 [[BoxSDK sharedSDK].foldersManager folderItemsWithID:parentID requestBuilder:checker success:checkSuccessBlock failure:checkFailBlock];
+    } else {
+    	 [[BoxSDK sharedSDK].foldersManager folderItemsWithID:BoxAPIFolderIDRoot requestBuilder:checker success:checkSuccessBlock failure:checkFailBlock];
+    }
 
 }
 
