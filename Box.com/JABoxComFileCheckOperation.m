@@ -31,27 +31,9 @@
 
 @interface JABoxComFileCheckOperation ()
 
-@property (nonatomic,strong) JABoxComFileCheckWrapper *checkWrapper;
-@property (nonatomic,assign) BOOL executing;
-@property (nonatomic,assign) BOOL finished;
 @end
 
 @implementation JABoxComFileCheckOperation
-
--(id)initWithUploadInfo:(NSMutableDictionary *)fileInfo {
-    if (self = [super init]) {
-        self.itemToUpload = fileInfo;
-        _finished = NO;
-        _executing = NO;
-    }
-    return self;
-}
-
-- (BOOL)isConcurrent { return YES; }
-
-- (BOOL)isExecuting { return _executing; }
-
-- (BOOL)isFinished { return _finished; }
 
 -(void)start {
     if (![NSThread isMainThread]) {
@@ -59,27 +41,18 @@
         return;
     }
     self.checkWrapper = [JABoxComFileCheckWrapper checkerWithPaths:self.itemToUpload completed:^(NSMutableDictionary *fileInfo) {
-        if ([_operationDelegate respondsToSelector:@selector(boxOperation:checkFinishedWithInfo:)]) {
-            [_operationDelegate boxOperation:self checkFinishedWithInfo:fileInfo];
+        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFinishedWithInfo:)]) {
+            [self.operationDelegate fileCheckOperation:self checkFinishedWithInfo:fileInfo];
         }
     } failed:^(NSError *error) {
-        if ([_operationDelegate respondsToSelector:@selector(boxOperation:checkFailedWithError:)]) {
-            [_operationDelegate boxOperation:self checkFailedWithError:error];
+        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFailedWithError:)]) {
+            [self.operationDelegate fileCheckOperation:self checkFailedWithError:error];
             
         }
     }];
     [_checkWrapper checkFile];
 }
 
-- (void)updateCompletedState {
-    [self willChangeValueForKey: @"isExecuting"];
-    _executing = NO;
-    [self didChangeValueForKey: @"isExecuting"];
-	
-    [self willChangeValueForKey: @"isFinished"];
-    _finished = YES;
-    [self didChangeValueForKey: @"isFinished"];
-}
 
 
 @end

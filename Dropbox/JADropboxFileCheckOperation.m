@@ -28,28 +28,14 @@
  */
 
 #import "JADropboxFileCheckOperation.h"
+
+
 @interface JADropboxFileCheckOperation ()
-@property (nonatomic,strong) JADropboxFileCheckWrapper *checkWrapper;
-@property (nonatomic,assign) BOOL executing;
-@property (nonatomic,assign) BOOL finished;
+
 @end
 
 @implementation JADropboxFileCheckOperation
 
--(id)initWithUploadInfo:(NSMutableDictionary *)uploadInfo {
-    if (self = [super init]) {
-        self.itemToUpload = uploadInfo;
-        _finished = NO;
-        _executing = NO;
-    }
-    return self;
-}
-
-- (BOOL)isConcurrent { return YES; }
-
-- (BOOL)isExecuting { return _executing; }
-
-- (BOOL)isFinished { return _finished; }
 
 -(void)start {
     if (![NSThread isMainThread]) {
@@ -57,27 +43,18 @@
         return;
     }
     self.checkWrapper = [JADropboxFileCheckWrapper checkerWithPaths:self.itemToUpload completed:^(NSMutableDictionary *fileInfo) {
-        if ([_operationDelegate respondsToSelector:@selector(dropboxOperation:checkFinishedWithInfo:)]) {
-            [_operationDelegate dropboxOperation:self checkFinishedWithInfo:fileInfo];
+        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFinishedWithInfo:)]) {
+            [self.operationDelegate fileCheckOperation:self checkFinishedWithInfo:fileInfo];
         }
     } failed:^(NSError *error) {
-        if ([_operationDelegate respondsToSelector:@selector(dropboxOperation:checkFailedWithError:)]) {
-            [_operationDelegate dropboxOperation:self checkFailedWithError:error];
+        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFailedWithError:)]) {
+            [self.operationDelegate fileCheckOperation:self checkFailedWithError:error];
             
         }
     }];
     [_checkWrapper checkFile];
 }
 
-- (void)updateCompletedState {
-    [self willChangeValueForKey: @"isExecuting"];
-    _executing = NO;
-    [self didChangeValueForKey: @"isExecuting"];
-	
-    [self willChangeValueForKey: @"isFinished"];
-    _finished = YES;
-    [self didChangeValueForKey: @"isFinished"];
-}
 
 
 @end

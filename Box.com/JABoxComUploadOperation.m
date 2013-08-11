@@ -29,27 +29,10 @@
 
 #import "JABoxComUploadOperation.h"
 @interface JABoxComUploadOperation ()
-@property (nonatomic,strong) JABoxComUploadWrapper *uploadWrapper;
-@property (nonatomic,assign) BOOL executing;
-@property (nonatomic,assign) BOOL finished;
+
 @end
 
 @implementation JABoxComUploadOperation
-
--(id)initWithUploadInfo:(NSMutableDictionary *)info {
-    if (self = [super init]) {
-        self.itemToUpload = info;
-        _finished = NO;
-        _executing = NO;
-    }
-    return self;
-}
-
-- (BOOL)isConcurrent { return YES; }
-
-- (BOOL)isExecuting { return _executing; }
-
-- (BOOL)isFinished { return _finished; }
 
 -(void)start {
     
@@ -69,37 +52,26 @@
     self.uploadWrapper = [JABoxComUploadWrapper uploaderWithPaths:self.itemToUpload progress:^(NSMutableDictionary *uploadInfo) {
         
         if (self.isCancelled) {
-            [_uploadWrapper.boxUploadOperation cancel];
+            [self.uploadWrapper.boxUploadOperation cancel];
             [self updateCompletedState];
             [app endBackgroundTask:bgTask];
         }
-        [_operationDelegate boxOperation:self didUploadPercentageForItem:uploadInfo];
+        [self.operationDelegate uploadOperation:self didUploadPercentageForItem:uploadInfo];
         
     } completed:^(NSMutableDictionary *info) {
         
-        [_operationDelegate boxOperation:self uploadedLocalFileWithInfo:info];
+        [self.operationDelegate uploadOperation:self uploadedLocalFileWithInfo:info];
         [app endBackgroundTask:bgTask];
         
     } failed:^(NSError *error) {
         
-        [_operationDelegate boxOperation:self uploadFailedWithError:error];
+        [self.operationDelegate uploadOperation:self uploadFailedWithError:error];
         [app endBackgroundTask:bgTask];
         
     }];
     [_uploadWrapper upload];
     
 
-}
-
-
-- (void)updateCompletedState {
-    [self willChangeValueForKey:@"isExecuting"];
-    _executing = NO;
-    [self didChangeValueForKey:@"isExecuting"];
-	
-    [self willChangeValueForKey:@"isFinished"];
-    _finished = YES;
-    [self didChangeValueForKey:@"isFinished"];
 }
 
 @end

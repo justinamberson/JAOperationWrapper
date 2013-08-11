@@ -24,42 +24,38 @@
  */
 
 /*
- JADropboxFileCheckWrapper.h
+ JAFileCheckWrapper.h
  */
 
 #import <Foundation/Foundation.h>
-#import <DropboxSDK/DropboxSDK.h>
 #import "JAOperationWrapperConstants.h"
 
-typedef void (^JADropboxCheckerCompletedBlock)(NSMutableDictionary *fileInfo);
-typedef void (^JADropboxCheckerFailedBlock)(NSError *error);
+typedef void (^JAFileCheckCompletedBlock)(NSMutableDictionary *fileInfo);
+typedef void (^JAFileCheckFailedBlock)(NSError *error);
 
-@interface JADropboxFileCheckWrapper : NSObject <DBRestClientDelegate>
+@interface JAFileCheckWrapper : NSObject
 
 /*
  NSMutableDictionary *pathsDictionary - should contain objects with these keys:
  NSString *const JAFileUploadNameKey
- NSString *const JAFileUploadRemotePathKey */
+ NSString *const JAFileUploadRemotePathKey - Please use the "parent ID", see Box.com documentation
+ */
 @property (nonatomic,strong) NSMutableDictionary *pathsDictionary;
 
 /*
- Gets set automatically  */
-@property (nonatomic,assign,readonly) BOOL isChecking;
-
-/*
  A block to fire upon completion, or failure */
-@property (nonatomic,copy) JADropboxCheckerCompletedBlock completedBlock; //receives NSDictionary
-@property (nonatomic,copy) JADropboxCheckerFailedBlock failedBlock; //receives NSError
+@property (nonatomic,copy) JAFileCheckCompletedBlock completedBlock; //receives NSDictionary
+@property (nonatomic,copy) JAFileCheckFailedBlock failedBlock; //receives NSError
 
 /*
  Main constructor to use to set up a new uploader
- JADropboxFileCheckWrapper *checker = [JADropboxFileCheckWrapper checkerWithPaths:... */
-+(JADropboxFileCheckWrapper *)checkerWithPaths:(NSMutableDictionary *)paths completed:(JADropboxCheckerCompletedBlock)compBlock failed:(JADropboxCheckerFailedBlock)failBlock;
+ JABoxComFileCheckWrapper *checker = [BoxComFileCheckWrapper checkerWithPaths:... */
++(id)checkerWithPaths:(NSMutableDictionary *)paths completed:(JAFileCheckCompletedBlock)compBlock failed:(JAFileCheckFailedBlock)failBlock;
 
 /*
  Begin upload work
  example:
- JADropboxFileCheckWrapper *checker = [JADropboxFileCheckWrapper checkerWithPaths:...
+ JAFileCheckWrapper *checker = [JAFileCheckWrapper checkerWithPaths:...
  [checker checkFile]; */
 -(void)checkFile;
 

@@ -28,34 +28,18 @@
  */
 #import "JABoxComFileCheckWrapper.h"
 #import "JAOperationWrapperConstants.h"
-#import <BoxSDK/BoxSDK.h>
 
 @interface JABoxComFileCheckWrapper ()
-@property (nonatomic,strong) DBRestClient *dbClient;
--(id)initWithPaths:(NSMutableDictionary *)paths completed:(JABoxComCheckerCompletedBlock)compBlock failed:(JABoxComCheckerFailedBlock)failBlock;
+
 @end
 
 
 @implementation JABoxComFileCheckWrapper
 
-
--(id)initWithPaths:(NSMutableDictionary *)paths completed:(JABoxComCheckerCompletedBlock)compBlock failed:(JABoxComCheckerFailedBlock)failBlock {
-	if (self = [super init]) {
-        self.pathsDictionary = paths;
-        _completedBlock = compBlock;
-        _failedBlock = failBlock;
-	}
-	return self;
-}
-
-+(JABoxComFileCheckWrapper *)checkerWithPaths:(NSMutableDictionary *)paths completed:(JABoxComCheckerCompletedBlock)compBlock failed:(JABoxComCheckerFailedBlock)failBlock {
-    return [[JABoxComFileCheckWrapper alloc] initWithPaths:paths completed:compBlock failed:failBlock];
-}
-
 -(void)checkFile {
+    
 	NSString *parentID = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
     NSString *remotePath = [self.pathsDictionary objectForKey:JAFileUploadNameKey];
-    _isChecking = YES;
     BoxCollectionBlock checkSuccessBlock = ^(BoxCollection *collection) {
         NSUInteger i;
         for (i = 0;i<collection.numberOfEntries;i++) {
@@ -67,19 +51,20 @@
                 NSString *fileID = [json objectForKey:@"id"];
                 [self.pathsDictionary setObject:fileID forKey:JAFileUploadPathIDKey];
             }
-            _isChecking = NO;
+            
         }
-        _completedBlock(_pathsDictionary);
+        self.completedBlock(self.pathsDictionary);
     };
     BoxAPIJSONFailureBlock checkFailBlock = ^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, NSDictionary *JSONDictionary) {
-        _failedBlock(error);
-        _isChecking = NO;
+        self.failedBlock(error);
+        
     };
-    BoxFoldersRequestBuilder *checker = [[BoxFoldersRequestBuilder alloc]init];
+    self.checker = [[BoxFoldersRequestBuilder alloc]init];
+    
     if (parentID) {
-    	 [[BoxSDK sharedSDK].foldersManager folderItemsWithID:parentID requestBuilder:checker success:checkSuccessBlock failure:checkFailBlock];
+    	 [[BoxSDK sharedSDK].foldersManager folderItemsWithID:parentID requestBuilder:_checker success:checkSuccessBlock failure:checkFailBlock];
     } else {
-    	 [[BoxSDK sharedSDK].foldersManager folderItemsWithID:BoxAPIFolderIDRoot requestBuilder:checker success:checkSuccessBlock failure:checkFailBlock];
+    	 [[BoxSDK sharedSDK].foldersManager folderItemsWithID:BoxAPIFolderIDRoot requestBuilder:_checker success:checkSuccessBlock failure:checkFailBlock];
     }
 
 }

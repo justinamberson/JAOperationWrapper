@@ -24,40 +24,35 @@
  */
 
 /*
- JAUploadOperation.h
+ JAFileCheckWrapper.m
  */
-@class JAUploadOperation;
-@protocol JAUploadOperationDelegate <NSObject>
 
--(void)uploadOperation:(JAUploadOperation *)operation didUploadPercentageForItem:(NSMutableDictionary *)uploadInfo;
--(void)uploadOperation:(JAUploadOperation *)operation uploadFailedWithError:(NSError *)error;
--(void)uploadOperation:(JAUploadOperation *)operation uploadedLocalFileWithInfo:(NSMutableDictionary *)infoDict;
+#import "JAFileCheckWrapper.h"
 
+@interface JAFileCheckWrapper ()
+-(id)initWithPaths:(NSMutableDictionary *)paths completed:(JAFileCheckCompletedBlock)compBlock failed:(JAFileCheckFailedBlock)failBlock;
 @end
 
-@interface JAUploadOperation : NSOperation
 
-/*
- NSMutableDictionary *itemToUpload - should contain objects with these keys:
- NSString *const JAFileUploadNameKey
- NSString *const JAFileUploadRemotePathKey
- NSString *const JAFileUploadPathIDKey
- NSString *const JAFileUploadLocalPathKey */
-@property (nonatomic,strong) NSMutableDictionary *itemToUpload;
+@implementation JAFileCheckWrapper
 
-/*
- Delegate object to receive callbacks didUploadPercentage, uploadFailedWithError,
- and uploadedLocalFileWithInfo */
-@property (nonatomic,weak) id <JAUploadOperationDelegate> operationDelegate;
 
-/*
- Main constructor method */
--(id)initWithUploadInfo:(NSMutableDictionary *)info;
+-(id)initWithPaths:(NSMutableDictionary *)paths completed:(JAFileCheckCompletedBlock)compBlock failed:(JAFileCheckFailedBlock)failBlock {
+	if (self = [super init]) {
+        self.pathsDictionary = paths;
+        _completedBlock = compBlock;
+        _failedBlock = failBlock;
+	}
+	return self;
+}
 
-/*
- Call this to end the NSOperation lifecycle */
--(void)updateCompletedState;
++(id)checkerWithPaths:(NSMutableDictionary *)paths completed:(JAFileCheckCompletedBlock)compBlock failed:(JAFileCheckFailedBlock)failBlock {
+    return [[[self class] alloc] initWithPaths:paths completed:compBlock failed:failBlock];
+}
 
+-(void)checkFile {
+	NSLog(@"Please override this -checkFile method in your class");
+}
 
 
 @end

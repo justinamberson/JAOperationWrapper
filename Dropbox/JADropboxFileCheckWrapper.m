@@ -29,27 +29,22 @@
 
 #import "JADropboxFileCheckWrapper.h"
 @interface JADropboxFileCheckWrapper ()
-@property (nonatomic,strong) DBRestClient *dbClient;
--(id)initWithPaths:(NSMutableDictionary *)paths completed:(JADropboxCheckerCompletedBlock)compBlock failed:(JADropboxCheckerFailedBlock)failBlock;
+
 @end
 
 @implementation JADropboxFileCheckWrapper
 
--(id)initWithPaths:(NSMutableDictionary *)paths completed:(JADropboxCheckerCompletedBlock)compBlock failed:(JADropboxCheckerFailedBlock)failBlock {
-	if (self = [super init]) {
-		self.dbClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-		self.dbClient.delegate = self;
-        self.pathsDictionary = paths;
-        _completedBlock = compBlock;
-        _failedBlock = failBlock;
-	}
-	return self;
+-(void)checkFile {
+    if (!self.dbClient) {
+        self.dbClient = [[DBRestClient alloc]initWithSession:[DBSession sharedSession]];
+        _dbClient.delegate = self;
+    }
+    NSString *remotePath = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
+    [_dbClient loadMetadata:remotePath];
 }
 
-+(JADropboxFileCheckWrapper *)checkerWithPaths:(NSMutableDictionary *)paths completed:(JADropboxCheckerCompletedBlock)compBlock failed:(JADropboxCheckerFailedBlock)failBlock {
-    return [[JADropboxFileCheckWrapper alloc] initWithPaths:paths completed:compBlock failed:failBlock];
-}
-
+#pragma mark -
+#pragma mark DBRestClientDelegate
 
 - (void)restClient:(DBRestClient*)client loadedMetadata:(DBMetadata*)metadata {
     
@@ -58,7 +53,7 @@
     NSString *parentRevision;
 	for (DBMetadata *child in metadata.contents) {
 		NSString *lastObject = [[child.path pathComponents]lastObject];
-		NSString *filePath = child.path;        
+		NSString *filePath = child.path;
 		if ([lastObject isEqualToString:[self.pathsDictionary objectForKey:JAFileUploadNameKey]]) {
 			fileAvailable = YES;
 			availableFilePath = filePath;
@@ -69,12 +64,10 @@
         //File was found, record the Parent Revision
 		[self.pathsDictionary setObject:parentRevision forKey:JAFileUploadPathIDKey];
 	}
-    _completedBlock(_pathsDictionary);
-    _isChecking = NO;
+    self.completedBlock(self.pathsDictionary);
     
     
 }
-
 
 - (void)restClient:(DBRestClient*)client loadMetadataFailedWithError:(NSError*)error {
     
@@ -82,20 +75,13 @@
         //Run the completed block. Dropbox is complaining that the remotePath doesn't exist.
         //When you attempt to upload to this path, it will be created if it does not exist.
         //So, don't worry about it if you encounter 404
-        _completedBlock(_pathsDictionary);
+        self.completedBlock(self.pathsDictionary);
     } else {
         //other errors, tell client
-        _failedBlock(error);
+        self.failedBlock(error);
     }
     
-    _isChecking = NO;
+    
 }
-
--(void)checkFile {
-    NSString *remotePath = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
-    _isChecking = YES;
-    [self.dbClient loadMetadata:remotePath];
-}
-
 
 @end

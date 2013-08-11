@@ -24,41 +24,15 @@
  */
 
 /*
- JABoxComFileCheckOperation.h
+ JABoxComUploadWrapper.h
  */
 
 #import <Foundation/Foundation.h>
-#import "JABoxComFileCheckWrapper.h"
+#import "JAUploadOperation.h"
+#import "JABoxComUploadWrapper.h"
 
-@class JABoxComFileCheckOperation;
+@interface JABoxComUploadOperation : JAUploadOperation
 
-@protocol JABoxComFileCheckOperationDelegate <NSObject>
-
--(void)boxOperation:(JABoxComFileCheckOperation *)operation checkFailedWithError:(NSError *)error;
--(void)boxOperation:(JABoxComFileCheckOperation *)operation checkFinishedWithInfo:(NSMutableDictionary *)infoDict;
-
-@end
-
-@interface JABoxComFileCheckOperation : NSOperation
-
-/*
- NSMutableDictionary *itemToUpload - should contain objects with these keys:
- NSString *const JAFileUploadNameKey
- NSString *const JAFileUploadRemotePathKey
- NSString *const JAFileUploadLocalPathKey */
-@property (nonatomic,strong) NSMutableDictionary *itemToUpload;
-
-/*
- To receive the delegate callbacks checkFailedWithError, checkFinishedWithInfo */
-@property (nonatomic,weak) id<JABoxComFileCheckOperationDelegate> operationDelegate;
-
-
-/*
- Constructor method */
--(id)initWithUploadInfo:(NSMutableDictionary *)uploadInfo;
-
-/*
- Call this when the operation is finished */
--(void)updateCompletedState;
+@property (nonatomic,strong) JABoxComUploadWrapper *uploadWrapper;
 
 @end

@@ -24,21 +24,18 @@
  */
 
 /*
- JABoxComUploadWrapper.h
+ JAUploadOperation.h
  */
 
-#import <Foundation/Foundation.h>
-#import "JABoxComUploadWrapper.h"
-@class JABoxComUploadOperation;
-@protocol JABoxComUploadOperationDelegate <NSObject>
+@protocol JAUploadOperationDelegate <NSObject>
 
--(void)boxOperation:(JABoxComUploadOperation *)operation didUploadPercentageForItem:(NSMutableDictionary *)uploadInfo;
--(void)boxOperation:(JABoxComUploadOperation *)operation uploadFailedWithError:(NSError *)error;
--(void)boxOperation:(JABoxComUploadOperation *)operation uploadedLocalFileWithInfo:(NSMutableDictionary *)infoDict;
+-(void)uploadOperation:(id)operation didUploadPercentageForItem:(NSMutableDictionary *)uploadInfo;
+-(void)uploadOperation:(id)operation uploadFailedWithError:(NSError *)error;
+-(void)uploadOperation:(id)operation uploadedLocalFileWithInfo:(NSMutableDictionary *)infoDict;
 
 @end
 
-@interface JABoxComUploadOperation : NSOperation
+@interface JAUploadOperation : NSOperation
 
 /*
  NSMutableDictionary *itemToUpload - should contain objects with these keys:
@@ -51,7 +48,7 @@
 /*
  Delegate object to receive callbacks didUploadPercentage, uploadFailedWithError,
  and uploadedLocalFileWithInfo */
-@property (nonatomic,weak) id<JABoxComUploadOperationDelegate> operationDelegate;
+@property (nonatomic,weak) id <JAUploadOperationDelegate> operationDelegate;
 
 /*
  Main constructor method */
