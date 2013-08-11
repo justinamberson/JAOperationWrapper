@@ -30,41 +30,25 @@
 #import "JADropboxUploadWrapper.h"
 @interface JADropboxUploadWrapper ()
 
--(id)initWithPaths:(NSMutableDictionary *)paths progress:(JADropboxUploadProgressBlock)progBlock completed:(JADropboxUploadCompletedBlock)compBlock failed:(JADropboxUploadFailedBlock)failBlock;
 @end
 
 @implementation JADropboxUploadWrapper
 
 #pragma mark -
-#pragma mark object init methods
-
--(id)initWithPaths:(NSMutableDictionary *)paths progress:(JADropboxUploadProgressBlock)progBlock completed:(JADropboxUploadCompletedBlock)compBlock failed:(JADropboxUploadFailedBlock)failBlock {
-    if (self = [super init]) {
-        _dbClient = [[DBRestClient alloc]initWithSession:[DBSession sharedSession]];
-        _dbClient.delegate = self;
-        self.pathsDictionary = paths;
-        _failedBlock = failBlock;
-        _completedBlock = compBlock;
-        _progressBlock = progBlock;
-    }
-    return self;
-    
-}
-
-+(JADropboxUploadWrapper *)uploaderWithPaths:(NSMutableDictionary *)paths progress:(JADropboxUploadProgressBlock)progBlock completed:(JADropboxUploadCompletedBlock)compBlock failed:(JADropboxUploadFailedBlock)failBlock {
-   return [[JADropboxUploadWrapper alloc]initWithPaths:paths progress:progBlock completed:compBlock failed:failBlock];
-}
-
-#pragma mark -
 #pragma mark work
 
 -(void)upload {
-    _isUploading = YES;
-    NSString *fileName = [_pathsDictionary objectForKey:JAFileUploadNameKey];
-    NSString *remotePath = [_pathsDictionary objectForKey:JAFileUploadRemotePathKey];
-    NSString *parentRev = [_pathsDictionary objectForKey:JAFileUploadPathIDKey];
-    NSString *localPath = [_pathsDictionary objectForKey:JAFileUploadLocalPathKey];
+    
+    if (!self.dbClient) {
+        self.dbClient = [[DBRestClient alloc]initWithSession:[DBSession sharedSession]];
+        _dbClient.delegate = self;
+    }
+    NSString *fileName = [self.pathsDictionary objectForKey:JAFileUploadNameKey];
+    NSString *remotePath = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
+    NSString *parentRev = [self.pathsDictionary objectForKey:JAFileUploadPathIDKey];
+    NSString *localPath = [self.pathsDictionary objectForKey:JAFileUploadLocalPathKey];
     [_dbClient uploadFile:fileName toPath:remotePath withParentRev:parentRev fromPath:localPath];
+    
 }
 
 #pragma mark -
@@ -72,22 +56,19 @@
 
 - (void)restClient:(DBRestClient*)client uploadedFile:(NSString*)destPath from:(NSString*)srcPath {
     NSDate *now = [NSDate date];
-    [_pathsDictionary setObject:now forKey:JAFileUploadDateKey];
-    [_pathsDictionary setObject:@"Dropbox" forKey:JAFileUploadServiceNameKey];
-    _completedBlock(_pathsDictionary);
-    _isUploading = NO;
+    [self.pathsDictionary setObject:now forKey:JAFileUploadDateKey];
+    [self.pathsDictionary setObject:@"Dropbox" forKey:JAFileUploadServiceNameKey];
+    self.completedBlock(self.pathsDictionary);
     
 }
 - (void)restClient:(DBRestClient*)client uploadProgress:(CGFloat)progress forFile:(NSString*)destPath from:(NSString*)srcPath {
-    [_pathsDictionary setObject:[NSNumber numberWithFloat:progress] forKey:JAFileUploadPercentageKey];
-    _progressBlock(_pathsDictionary);
+    [self.pathsDictionary setObject:[NSNumber numberWithFloat:progress] forKey:JAFileUploadPercentageKey];
+    self.progressBlock(self.pathsDictionary);
 	
 }
 - (void)restClient:(DBRestClient*)client uploadFileFailedWithError:(NSError*)error {
-    _failedBlock(error);
-    _isUploading = NO;
+    self.failedBlock(error);
 
-	
 }
 
 

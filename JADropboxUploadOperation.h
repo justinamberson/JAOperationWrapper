@@ -29,37 +29,10 @@
 
 #import <Foundation/Foundation.h>
 #import "JADropboxUploadWrapper.h"
+#import "JAUploadOperation.h"
 
-@class JADropboxUploadOperation;
-@protocol JADropboxUploadOperationDelegate <NSObject>
+@interface JADropboxUploadOperation : JAUploadOperation
 
--(void)dropboxOperation:(JADropboxUploadOperation *)operation didUploadPercentageForItem:(NSMutableDictionary *)uploadInfo;
--(void)dropboxOperation:(JADropboxUploadOperation *)operation uploadFailedWithError:(NSError *)error;
--(void)dropboxOperation:(JADropboxUploadOperation *)operation uploadedLocalFileWithInfo:(NSMutableDictionary *)infoDict;
-
-@end
-
-@interface JADropboxUploadOperation : NSOperation
-
-/*
- NSMutableDictionary *itemToUpload - should contain objects with these keys:
- NSString *const JAFileUploadNameKey
- NSString *const JAFileUploadRemotePathKey
- NSString *const JAFileUploadPathIDKey
- NSString *const JAFileUploadLocalPathKey */
-@property (nonatomic,strong) NSMutableDictionary *itemToUpload;
-
-/*
- Delegate object to receive callbacks didUploadPercentage, uploadFailedWithError,
- and uploadedLocalFileWithInfo */
-@property (nonatomic,weak) id<JADropboxUploadOperationDelegate> operationDelegate;
-
-/* 
- Main constructor method */
--(id)initWithUploadInfo:(NSMutableDictionary *)info;
-
-/*
- Call this to end the NSOperation lifecycle */
--(void)updateCompletedState;
+@property (nonatomic,strong) JADropboxUploadWrapper *uploadWrapper;
 
 @end

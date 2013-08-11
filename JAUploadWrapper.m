@@ -1,4 +1,3 @@
-
 /*
  The MIT License (MIT)
  
@@ -24,14 +23,38 @@
  */
 
 /*
- JADropboxUploadWrapper.h
+ JAUploadWrapper.m
  */
-#import <Foundation/Foundation.h>
-#import <DropboxSDK/DBRestClient.h>
+
 #import "JAUploadWrapper.h"
 
-@interface JADropboxUploadWrapper : JAUploadWrapper <DBRestClientDelegate>
+@interface JAUploadWrapper ()
 
-@property (nonatomic,strong) DBRestClient *dbClient;
+-(id)initWithPaths:(NSMutableDictionary *)paths progress:(JAUploadProgressBlock)progBlock completed:(JAUploadCompletedBlock)compBlock failed:(JAUploadFailedBlock)failBlock;
+@end
+
+@implementation JAUploadWrapper
+
+#pragma mark -
+#pragma mark object init methods
+
+-(id)initWithPaths:(NSMutableDictionary *)paths progress:(JAUploadProgressBlock)progBlock completed:(JAUploadCompletedBlock)compBlock failed:(JAUploadFailedBlock)failBlock {
+    if (self = [super init]) {
+        self.pathsDictionary = paths;
+        _failedBlock = failBlock;
+        _completedBlock = compBlock;
+        _progressBlock = progBlock;
+    }
+    return self;
+}
+
++(id)uploaderWithPaths:(NSMutableDictionary *)paths progress:(JAUploadProgressBlock)progBlock completed:(JAUploadCompletedBlock)compBlock failed:(JAUploadFailedBlock)failBlock {
+    return [[[self class] alloc]initWithPaths:paths progress:progBlock completed:compBlock failed:failBlock];
+}
+
+-(void)upload {
+    NSLog(@"You must override this method in your subclass. Perform needed setup here, wire up delegates, etc.");
+}
+
 
 @end

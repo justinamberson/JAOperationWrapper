@@ -24,14 +24,48 @@
  */
 
 /*
- JADropboxUploadWrapper.h
+ JAUploadOperation.m
  */
-#import <Foundation/Foundation.h>
-#import <DropboxSDK/DBRestClient.h>
-#import "JAUploadWrapper.h"
 
-@interface JADropboxUploadWrapper : JAUploadWrapper <DBRestClientDelegate>
+#import "JAUploadOperation.h"
+@interface JAUploadOperation ()
+@property (nonatomic,strong) JAUploadOperation *uploadWrapper;
+@property (nonatomic,assign, readonly) BOOL executing;
+@property (nonatomic,assign, readonly) BOOL finished;
+@end
 
-@property (nonatomic,strong) DBRestClient *dbClient;
+@implementation JAUploadOperation
+
+-(id)initWithUploadInfo:(NSMutableDictionary *)info {
+    if (self = [super init]) {
+        self.itemToUpload = info;
+        _finished = NO;
+        _executing = NO;
+    }
+    return self;
+}
+
+- (BOOL)isConcurrent { return YES; }
+
+- (BOOL)isExecuting { return _executing; }
+
+- (BOOL)isFinished { return _finished; }
+
+- (void)updateCompletedState {
+    [self willChangeValueForKey:@"isExecuting"];
+    _executing = NO;
+    [self didChangeValueForKey:@"isExecuting"];
+	
+    [self willChangeValueForKey:@"isFinished"];
+    _finished = YES;
+    [self didChangeValueForKey:@"isFinished"];
+}
+
+-(void)start {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"Please override the start or main method of this class.");
+    });
+    [self updateCompletedState];
+}
 
 @end

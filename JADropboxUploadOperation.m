@@ -29,41 +29,24 @@
 
 #import "JADropboxUploadOperation.h"
 @interface JADropboxUploadOperation ()
-@property (nonatomic,strong) JADropboxUploadWrapper *uploadWrapper;
-@property (nonatomic,assign, readonly) BOOL executing;
-@property (nonatomic,assign, readonly) BOOL finished;
+
 @end
 
 @implementation JADropboxUploadOperation
 
--(id)initWithUploadInfo:(NSMutableDictionary *)info {
-    if (self = [super init]) {
-        self.itemToUpload = info;
-        _finished = NO;
-        _executing = NO;
-    }
-    return self;
-}
-
-- (BOOL)isConcurrent { return YES; }
-
-- (BOOL)isExecuting { return _executing; }
-
-- (BOOL)isFinished { return _finished; }
-
 -(void)start {
-  
+    
     if (![NSThread isMainThread]) {
-      
-       [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
-       return;
+        
+        [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
+        return;
     }
     UIApplication *app = [UIApplication sharedApplication];
     [app setIdleTimerDisabled:YES];
     UIBackgroundTaskIdentifier bgTask = 0;
     bgTask = [app beginBackgroundTaskWithExpirationHandler:^
               {
-                  [app endBackgroundTask:bgTask];                  
+                  [app endBackgroundTask:bgTask];
               }];
     self.uploadWrapper = [JADropboxUploadWrapper uploaderWithPaths:self.itemToUpload progress:^(NSMutableDictionary *uploadInfo) {
         if (self.isCancelled) {
@@ -71,36 +54,28 @@
             [self updateCompletedState];
             [app endBackgroundTask:bgTask];
         }
-        if ([_operationDelegate respondsToSelector:@selector(dropboxOperation:didUploadPercentageForItem:)]) {
-            [_operationDelegate dropboxOperation:self didUploadPercentageForItem:uploadInfo];
+        if ([self.operationDelegate respondsToSelector:@selector(uploadOperation:didUploadPercentageForItem:)]) {
+            [self.operationDelegate uploadOperation:self didUploadPercentageForItem:uploadInfo];
         }
         
     } completed:^(NSMutableDictionary *info) {
-        if ([_operationDelegate respondsToSelector:@selector(dropboxOperation:uploadedLocalFileWithInfo:)]) {
-             [_operationDelegate dropboxOperation:self uploadedLocalFileWithInfo:info];
+        if ([self.operationDelegate respondsToSelector:@selector(uploadOperation:uploadedLocalFileWithInfo:)]) {
+            [self.operationDelegate uploadOperation:self uploadedLocalFileWithInfo:info];
         }
         [app endBackgroundTask:bgTask];
         
     } failed:^(NSError *error) {
-        if ([_operationDelegate respondsToSelector:@selector(dropboxOperation:uploadFailedWithError:)]) {
-            [_operationDelegate dropboxOperation:self uploadFailedWithError:error];
+        if ([self.operationDelegate respondsToSelector:@selector(uploadOperation:uploadFailedWithError:)]) {
+            [self.operationDelegate uploadOperation:self uploadFailedWithError:error];
         }
         
         [app endBackgroundTask:bgTask];
     }];
     [_uploadWrapper upload];
-
+    
     
 }
 
-- (void)updateCompletedState {
-    [self willChangeValueForKey:@"isExecuting"];
-    _executing = NO;
-    [self didChangeValueForKey:@"isExecuting"];
-	
-    [self willChangeValueForKey:@"isFinished"];
-    _finished = YES;
-    [self didChangeValueForKey:@"isFinished"];
-}
+
 
 @end

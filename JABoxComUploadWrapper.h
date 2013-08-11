@@ -28,44 +28,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "JAUploadWrapper.h"
 #import <BoxSDK/BoxSDK.h>
 
-typedef void (^JABoxComUploadCompletedBlock)(NSMutableDictionary *uploadInfo);
-typedef void (^JABoxComUploadFailedBlock)(NSError *error);
-typedef void (^JABoxComUploadProgressBlock)(NSMutableDictionary *uploadInfo);
+@interface JABoxComUploadWrapper : JAUploadWrapper
 
-@interface JABoxComUploadWrapper : NSObject
-
-/*
- NSMutableDictionary *pathsDictionary - should contain objects with these keys:
- NSString *const JAFileUploadNameKey
- NSString *const JAFileUploadRemotePathKey - Supply the "parent ID" here. See box.com documentation
- NSString *const JAFileUploadPathIDKey
- NSString *const JAFileUploadLocalPathKey */
-@property (nonatomic,strong) NSMutableDictionary *pathsDictionary;
-
-/*
- Gets set automatically  */
-@property (nonatomic,assign,readonly) BOOL isUploading;
-
-/*
- A block to fire upon new progress %, completion, or failure */
-@property (nonatomic,copy) JABoxComUploadProgressBlock progressBlock; //receives NSDictionary
-@property (nonatomic,copy) JABoxComUploadCompletedBlock completedBlock; //receives NSDictionary
-@property (nonatomic,copy) JABoxComUploadFailedBlock failedBlock; //receives NSError
-
-/*
- Main constructor to use to set up a new uploader
- JABoxComUploadWrapper *uploader = [JABoxComUploadWrapper uploaderWithPaths:... */
-+(JABoxComUploadWrapper *)uploaderWithPaths:(NSMutableDictionary *)paths progress:(JABoxComUploadProgressBlock)progBlock completed:(JABoxComUploadCompletedBlock)compBlock failed:(JABoxComUploadFailedBlock)failBlock;
-
-/*
- Begin upload work
- example:
- JABoxComUploadWrapper *uploader = [JABoxComUploadWrapper uploaderWithPaths:...
- [uploader upload]; */
--(void)upload;
-
-@property (nonatomic,strong,readonly) BoxAPIMultipartToJSONOperation *boxUploadOperation;
+@property (nonatomic,strong) BoxAPIMultipartToJSONOperation *boxUploadOperation;
+@property (nonatomic,strong) BoxFilesRequestBuilder *requestBuilder;
 
 @end
