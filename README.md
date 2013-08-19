@@ -36,7 +36,13 @@ For example, the included Dropbox subclass:
 		JAFileUploadNameKey - For the file's name as it will appear on the service
 		JAFileUploadLocalPathKey - For the file's local path on the filesystem
 		JAFileUploadRemotePathKey - For the file's remote path on the service
-		JAFileUploadPathIDKey - For the file's "unique identifier" on the service 
+		JAFileUploadFileIDKey - For the file's "unique identifier" on the service 
+		
+		It's important to note that the Dropbox subclass will use `JAFileUploadFileIDKey`. 
+		There is also a `JAFileUploadPathIDKey`. `JAFileUploadFileIDKey` is used to store
+		information about the specific file in question. `JAFileUploadPathIDKey` is used
+		to store a unique indentifier for the file's "parent folder". Google Drive and
+		Box.com both use the "parent folder id" paradigm. Dropbox doesn't care about this.
 	*/
 	
 	[fileRepresentation setObject:@"mySong.mp3" forKey:JAFileUploadNameKey];
@@ -45,7 +51,7 @@ For example, the included Dropbox subclass:
 	[fileRepresentation setObject:remoteSongsPath forKey:JAFileUploadRemotePathKey];
 	//knownParentRev is optional and does not need to be set
 	//if it is not set and the file exists on Dropbox, a new file will be created
-	[fileRepresentation setObject:knownParentRev forKey:JAFileUploadPathIDKey];
+	[fileRepresentation setObject:knownParentRev forKey:JAFileUploadFileIDKey];
 	
 	JAUploadWrapperDropbox *wrapper = [JAUploadWrapperDropbox uploaderWithPaths:fileRepresentation progress:^(NSMutableDictionary *uploadInfo) {
 			//Receive the submitted NSMutableDictionary again in this block. There will be an
