@@ -44,7 +44,7 @@
         _dbClient.delegate = self;
     }
     NSString *fileName = [self.pathsDictionary objectForKey:JAFileUploadNameKey];
-    NSString *parentRev = [self.pathsDictionary objectForKey:JAFileUploadPathIDKey];
+    NSString *parentRev = [self.pathsDictionary objectForKey:JAFileUploadFileIDKey];
     NSString *localPath = [self.pathsDictionary objectForKey:JAFileUploadLocalPathKey];
     NSArray *remotePaths = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
     

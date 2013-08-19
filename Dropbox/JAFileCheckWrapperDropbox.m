@@ -75,7 +75,7 @@
 	}
 	if (fileAvailable) {
         //File was found, record the Parent Revision
-		[self.pathsDictionary setObject:parentRevision forKey:JAFileUploadPathIDKey];
+		[self.pathsDictionary setObject:parentRevision forKey:JAFileUploadFileIDKey];
 	}
     self.completedBlock(self.pathsDictionary);
     
