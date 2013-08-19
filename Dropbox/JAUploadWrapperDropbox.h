@@ -24,15 +24,13 @@
  */
 
 /*
- JADropboxFileCheckWrapper.h
+ JADropboxUploadWrapper.h
  */
-
 #import <Foundation/Foundation.h>
-#import "JAFileCheckWrapper.h"
-#import <DropboxSDK/DropboxSDK.h>
+#import <DropboxSDK/DBRestClient.h>
+#import "JAUploadWrapper.h"
 
-
-@interface JADropboxFileCheckWrapper : JAFileCheckWrapper <DBRestClientDelegate>
+@interface JAUploadWrapperDropbox : JAUploadWrapper <DBRestClientDelegate>
 
 @property (nonatomic,strong) DBRestClient *dbClient;
 

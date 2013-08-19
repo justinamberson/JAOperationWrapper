@@ -1,3 +1,4 @@
+
 /*
  The MIT License (MIT)
  
@@ -22,15 +23,16 @@
  THE SOFTWARE.
  */
 
-#import "JAOperationWrapperConstants.h"
+/*
+ JABoxComFileCheckWrapper.h
+ */
 
+#import <Foundation/Foundation.h>
+#import "JAFileCheckWrapper.h"
+#import <BoxSDK/BoxSDK.h>
 
-NSString *const JAFileUploadNameKey = @"JAFileUploadNameKey";
-NSString *const JAFileUploadRemotePathKey = @"JAFileUploadRemotePathKey";
-NSString *const JAFileUploadLocalPathKey = @"JAFileUploadLocalPathKey";
-NSString *const JAFileUploadPathIDKey = @"JAFileUploadPathIDKey";
-NSString *const JAFileUploadFileIDKey = @"JAFileUploadFileIDKey";
-NSString *const JAFileUploadShareLinkKey = @"JAFileUploadShareLinkKey";
-NSString *const JAFileUploadDateKey = @"JAFileUploadDateKey";
-NSString *const JAFileUploadServiceNameKey = @"JAFileUploadServiceNameKey";
-NSString *const JAFileUploadPercentageKey = @"JAFileUploadPercentageKey";
+@interface JAFileCheckWrapperBoxCom : JAFileCheckWrapper
+
+@property (nonatomic,strong) BoxFoldersRequestBuilder *checker;
+
+@end

@@ -27,12 +27,12 @@
  JADropboxUploadWrapper.m
  */
 
-#import "JADropboxUploadWrapper.h"
-@interface JADropboxUploadWrapper ()
+#import "JAUploadWrapperDropbox.h"
+@interface JAUploadWrapperDropbox ()
 
 @end
 
-@implementation JADropboxUploadWrapper
+@implementation JAUploadWrapperDropbox
 
 #pragma mark -
 #pragma mark work
@@ -44,11 +44,28 @@
         _dbClient.delegate = self;
     }
     NSString *fileName = [self.pathsDictionary objectForKey:JAFileUploadNameKey];
-    NSString *remotePath = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
     NSString *parentRev = [self.pathsDictionary objectForKey:JAFileUploadPathIDKey];
     NSString *localPath = [self.pathsDictionary objectForKey:JAFileUploadLocalPathKey];
-    [_dbClient uploadFile:fileName toPath:remotePath withParentRev:parentRev fromPath:localPath];
+    NSArray *remotePaths = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
     
+    NSMutableString *remotePathString = [NSMutableString string];
+    [remotePathString appendString:@"/"];
+    for (NSString *pathComponent in remotePaths) {
+        [remotePathString appendString:pathComponent];
+        
+        //Put a new forward slash '/' at behind this component
+        //if it is not the last item in the array
+        if (![pathComponent isEqual:[remotePaths lastObject]]) {
+            [remotePathString appendString:@"/"];
+        }
+    }
+    
+    [_dbClient uploadFile:fileName toPath:remotePathString withParentRev:parentRev fromPath:localPath];
+    
+}
+
+-(void)cancelUpload {
+    [_dbClient cancelAllRequests];
 }
 
 #pragma mark -

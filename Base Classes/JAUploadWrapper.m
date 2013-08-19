@@ -56,5 +56,9 @@
     NSLog(@"You must override this method in your subclass. Perform needed setup here, wire up delegates, etc.");
 }
 
+-(void)cancelUpload {
+    NSLog(@"You must override this method in your subclass. Kil the upload service in this method.");
+}
+
 
 @end

@@ -24,35 +24,54 @@
  */
 
 /*
- JABoxComFileCheckOperation.m
+ JABoxComUploadWrapper.h
  */
 
-#import "JABoxComFileCheckOperation.h"
-
-@interface JABoxComFileCheckOperation ()
+#import "JAUploadOperationBoxCom.h"
+@interface JAUploadOperationBoxCom ()
 
 @end
 
-@implementation JABoxComFileCheckOperation
+@implementation JAUploadOperationBoxCom
 
 -(void)start {
+    
     if (![NSThread isMainThread]) {
+        
         [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
         return;
     }
-    self.checkWrapper = [JABoxComFileCheckWrapper checkerWithPaths:self.itemToUpload completed:^(NSMutableDictionary *fileInfo) {
-        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFinishedWithInfo:)]) {
-            [self.operationDelegate fileCheckOperation:self checkFinishedWithInfo:fileInfo];
+    UIApplication *app = [UIApplication sharedApplication];
+    [app setIdleTimerDisabled:YES];
+    UIBackgroundTaskIdentifier bgTask = 0;
+    bgTask = [app beginBackgroundTaskWithExpirationHandler:^
+              {
+                  [app endBackgroundTask:bgTask];
+                  
+    }]; 
+    self.uploadWrapper = [JAUploadWrapperBoxCom uploaderWithPaths:self.itemToUpload progress:^(NSMutableDictionary *uploadInfo) {
+        
+        if (self.isCancelled) {
+            [self.uploadWrapper cancelUpload];
+            [self updateCompletedState];
+            [app endBackgroundTask:bgTask];
         }
+        [self.operationDelegate uploadOperation:self didUploadPercentageForItem:uploadInfo];
+        
+    } completed:^(NSMutableDictionary *info) {
+        
+        [self.operationDelegate uploadOperation:self uploadedLocalFileWithInfo:info];
+        [app endBackgroundTask:bgTask];
+        
     } failed:^(NSError *error) {
-        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFailedWithError:)]) {
-            [self.operationDelegate fileCheckOperation:self checkFailedWithError:error];
-            
-        }
+        
+        [self.operationDelegate uploadOperation:self uploadFailedWithError:error];
+        [app endBackgroundTask:bgTask];
+        
     }];
-    [_checkWrapper checkFile];
+    [_uploadWrapper upload];
+    
+
 }
-
-
 
 @end

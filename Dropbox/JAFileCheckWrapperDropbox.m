@@ -27,20 +27,33 @@
  JADropboxFileCheckWrapper.m
  */
 
-#import "JADropboxFileCheckWrapper.h"
-@interface JADropboxFileCheckWrapper ()
+#import "JAFileCheckWrapperDropbox.h"
+@interface JAFileCheckWrapperDropbox ()
 
 @end
 
-@implementation JADropboxFileCheckWrapper
+@implementation JAFileCheckWrapperDropbox
 
 -(void)checkFile {
     if (!self.dbClient) {
         self.dbClient = [[DBRestClient alloc]initWithSession:[DBSession sharedSession]];
         _dbClient.delegate = self;
     }
-    NSString *remotePath = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
-    [_dbClient loadMetadata:remotePath];
+    NSArray *remotePaths = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
+    
+    NSMutableString *remotePathString = [NSMutableString string];
+    [remotePathString appendString:@"/"];
+    for (NSString *pathComponent in remotePaths) {
+        [remotePathString appendString:pathComponent];
+        
+        //Put a new forward slash '/' behind this component
+        //if it is not the last item in the array
+        if (![pathComponent isEqual:[remotePaths lastObject]]) {
+            [remotePathString appendString:@"/"];
+        }
+    }
+
+    [_dbClient loadMetadata:remotePathString];
 }
 
 #pragma mark -

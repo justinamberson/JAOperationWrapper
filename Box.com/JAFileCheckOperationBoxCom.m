@@ -24,15 +24,35 @@
  */
 
 /*
- JABoxComFileCheckWrapper.h
+ JABoxComFileCheckOperation.m
  */
 
-#import <Foundation/Foundation.h>
-#import "JAFileCheckWrapper.h"
-#import <BoxSDK/BoxSDK.h>
+#import "JAFileCheckOperationBoxCom.h"
 
-@interface JABoxComFileCheckWrapper : JAFileCheckWrapper
+@interface JAFileCheckOperationBoxCom ()
 
-@property (nonatomic,strong) BoxFoldersRequestBuilder *checker;
+@end
+
+@implementation JAFileCheckOperationBoxCom
+
+-(void)start {
+    if (![NSThread isMainThread]) {
+        [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
+        return;
+    }
+    self.checkWrapper = [JAFileCheckWrapperBoxCom checkerWithPaths:self.itemToUpload completed:^(NSMutableDictionary *fileInfo) {
+        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFinishedWithInfo:)]) {
+            [self.operationDelegate fileCheckOperation:self checkFinishedWithInfo:fileInfo];
+        }
+    } failed:^(NSError *error) {
+        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFailedWithError:)]) {
+            [self.operationDelegate fileCheckOperation:self checkFailedWithError:error];
+            
+        }
+    }];
+    [_checkWrapper checkFile];
+}
+
+
 
 @end

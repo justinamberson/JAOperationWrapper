@@ -28,12 +28,11 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "JAUploadWrapper.h"
-#import <BoxSDK/BoxSDK.h>
+#import "JAUploadOperation.h"
+#import "JAUploadWrapperBoxCom.h"
 
-@interface JABoxComUploadWrapper : JAUploadWrapper
+@interface JAUploadOperationBoxCom : JAUploadOperation
 
-@property (nonatomic,strong) BoxAPIMultipartToJSONOperation *boxUploadOperation;
-@property (nonatomic,strong) BoxFilesRequestBuilder *requestBuilder;
+@property (nonatomic,strong) JAUploadWrapperBoxCom *uploadWrapper;
 
 @end

@@ -24,15 +24,12 @@
  */
 
 /*
- JADropboxUploadOperation.h
+ JADropboxUploadWrapper.m
  */
 
-#import "JADropboxUploadOperation.h"
-@interface JADropboxUploadOperation ()
+#import "JAUploadOperationGoogleDrive.h"
 
-@end
-
-@implementation JADropboxUploadOperation
+@implementation JAUploadOperationGoogleDrive
 
 -(void)start {
     
@@ -48,9 +45,9 @@
               {
                   [app endBackgroundTask:bgTask];
               }];
-    self.uploadWrapper = [JADropboxUploadWrapper uploaderWithPaths:self.itemToUpload progress:^(NSMutableDictionary *uploadInfo) {
+    self.uploadWrapper = [JAUploadWrapperGoogleDrive uploaderWithPaths:self.itemToUpload progress:^(NSMutableDictionary *uploadInfo) {
         if (self.isCancelled) {
-            [self.uploadWrapper.dbClient cancelAllRequests];
+            [self.uploadWrapper cancelUpload];
             [self updateCompletedState];
             [app endBackgroundTask:bgTask];
         }
@@ -75,7 +72,5 @@
     
     
 }
-
-
 
 @end

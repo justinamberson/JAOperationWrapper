@@ -28,11 +28,8 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "JAUploadOperation.h"
-#import "JABoxComUploadWrapper.h"
+#import "JAUploadWrapper.h"
 
-@interface JABoxComUploadOperation : JAUploadOperation
-
-@property (nonatomic,strong) JABoxComUploadWrapper *uploadWrapper;
+@interface JAUploadWrapperBoxCom : JAUploadWrapper
 
 @end

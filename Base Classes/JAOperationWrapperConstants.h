@@ -33,8 +33,11 @@ the upload service, ie "autoexec.bat"
 extern NSString *const JAFileUploadNameKey;
 
 /*
- JAFileUploadRemotePathKey - Used to identify the path of the upload service to
-upload to, ie "/System32/admin/"
+ JAFileUploadRemotePathKey - NSArray, with each NSString object representing a 
+ folder in the path heirarchy. For example, if you were going to upload to this
+ path: /My Cool App/Books/Classics/Bram Stoker
+ You would need to set the array like so:
+ [NSArray arrayWithObjects:@"My Cool App",@"Books",@"Classics",@"Bram Stoker"]
  */
 extern NSString *const JAFileUploadRemotePathKey;
 
@@ -63,8 +66,8 @@ uploaded to, ie "Dropbox"
 extern NSString *const JAFileUploadServiceNameKey;
 
 /*
- JAFileUploadPathIDKey - Used to set and retrieve information about a file's parent
-ie, Dropbox has a "parentRevision" and Box.com has a "parent ID"
+ JAFileUploadParentIDKey - Used to set and retrieve information about a file's parent
+ie, Dropbox has a "parentRevision", Box.com has a "parent ID, Google Drive has a "parent ID"
  */
 extern NSString *const JAFileUploadPathIDKey;
 
@@ -73,4 +76,9 @@ extern NSString *const JAFileUploadPathIDKey;
  */
 extern NSString *const JAFileUploadPercentageKey;
 
+/*
+ JAFileUploadFileIDKey - Used to set and retrieve information about a file on a
+ service that is represented by an ID. Google Drive uses a File ID
+ */
+extern NSString *const JAFileUploadFileIDKey;
 

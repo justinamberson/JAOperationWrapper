@@ -27,13 +27,16 @@
  JABoxComUploadWrapper.m
  */
 
-#import "JABoxComUploadWrapper.h"
+#import "JAUploadWrapperBoxCom.h"
 #import "JAOperationWrapperConstants.h"
-@interface JABoxComUploadWrapper ()
+#import <BoxSDK/BoxSDK.h>
 
+@interface JAUploadWrapperBoxCom ()
+@property (nonatomic,strong) BoxAPIMultipartToJSONOperation *boxUploadOperation;
+@property (nonatomic,strong) BoxFilesRequestBuilder *requestBuilder;
 @end
 
-@implementation JABoxComUploadWrapper
+@implementation JAUploadWrapperBoxCom
 
 #pragma mark -
 #pragma mark work
@@ -41,12 +44,12 @@
 -(void)upload {
     NSString *localPath = [self.pathsDictionary objectForKey:JAFileUploadLocalPathKey];
     NSString *fileName = [self.pathsDictionary objectForKey:JAFileUploadNameKey];
-    NSString *fileID = [self.pathsDictionary objectForKey:JAFileUploadPathIDKey];
-    NSString *parentID = [self.pathsDictionary objectForKey:JAFileUploadRemotePathKey];
+    NSString *fileID = [self.pathsDictionary objectForKey:JAFileUploadFileIDKey];
+    NSString *parentID = [self.pathsDictionary objectForKey:JAFileUploadPathIDKey];
     BoxFileBlock fileBlock = ^(BoxFile *file)
     {
-        NSString *pathID = [file.rawResponseJSON objectForKey:@"id"];
-        [self.pathsDictionary setObject:pathID forKey:JAFileUploadPathIDKey];
+        NSString *returnedFileId = [file.rawResponseJSON objectForKey:@"id"];
+        [self.pathsDictionary setObject:returnedFileId forKey:JAFileUploadFileIDKey];
         [self.pathsDictionary setObject:[NSDate date] forKey:JAFileUploadDateKey];
         [self.pathsDictionary setObject:@"Box.com" forKey:JAFileUploadServiceNameKey];
         self.completedBlock(self.pathsDictionary);
@@ -79,6 +82,10 @@
     } else {
         _boxUploadOperation = [[BoxSDK sharedSDK].filesManager uploadFileWithInputStream:inputStream contentLength:contentLength MIMEType:nil requestBuilder:builder success:fileBlock failure:failureBlock progress:blockProgress];
     }
+}
+
+-(void)cancelUpload {
+    [self.boxUploadOperation cancel];
 }
 
 @end

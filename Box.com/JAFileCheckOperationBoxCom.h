@@ -24,15 +24,15 @@
  */
 
 /*
- JADropboxFileCheckOperation.h
+ JABoxComFileCheckOperation.h
  */
 
 #import <Foundation/Foundation.h>
 #import "JAFileCheckOperation.h"
-#import "JADropboxFileCheckWrapper.h"
+#import "JAFileCheckWrapperBoxCom.h"
 
-@interface JADropboxFileCheckOperation : JAFileCheckOperation
+@interface JAFileCheckOperationBoxCom : JAFileCheckOperation
 
-@property (nonatomic,strong) JADropboxFileCheckWrapper *checkWrapper;
+@property (nonatomic,strong) JAFileCheckWrapperBoxCom *checkWrapper;
 
 @end

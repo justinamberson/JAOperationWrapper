@@ -24,54 +24,37 @@
  */
 
 /*
- JABoxComUploadWrapper.h
+ JADropboxFileCheckOperation.m
  */
 
-#import "JABoxComUploadOperation.h"
-@interface JABoxComUploadOperation ()
+#import "JAFileCheckOperationDropbox.h"
+
+
+@interface JAFileCheckOperationDropbox ()
 
 @end
 
-@implementation JABoxComUploadOperation
+@implementation JAFileCheckOperationDropbox
+
 
 -(void)start {
-    
     if (![NSThread isMainThread]) {
-        
         [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
         return;
     }
-    UIApplication *app = [UIApplication sharedApplication];
-    [app setIdleTimerDisabled:YES];
-    UIBackgroundTaskIdentifier bgTask = 0;
-    bgTask = [app beginBackgroundTaskWithExpirationHandler:^
-              {
-                  [app endBackgroundTask:bgTask];
-                  
-    }]; 
-    self.uploadWrapper = [JABoxComUploadWrapper uploaderWithPaths:self.itemToUpload progress:^(NSMutableDictionary *uploadInfo) {
-        
-        if (self.isCancelled) {
-            [self.uploadWrapper.boxUploadOperation cancel];
-            [self updateCompletedState];
-            [app endBackgroundTask:bgTask];
+    self.checkWrapper = [JAFileCheckWrapperDropbox checkerWithPaths:self.itemToUpload completed:^(NSMutableDictionary *fileInfo) {
+        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFinishedWithInfo:)]) {
+            [self.operationDelegate fileCheckOperation:self checkFinishedWithInfo:fileInfo];
         }
-        [self.operationDelegate uploadOperation:self didUploadPercentageForItem:uploadInfo];
-        
-    } completed:^(NSMutableDictionary *info) {
-        
-        [self.operationDelegate uploadOperation:self uploadedLocalFileWithInfo:info];
-        [app endBackgroundTask:bgTask];
-        
     } failed:^(NSError *error) {
-        
-        [self.operationDelegate uploadOperation:self uploadFailedWithError:error];
-        [app endBackgroundTask:bgTask];
-        
+        if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFailedWithError:)]) {
+            [self.operationDelegate fileCheckOperation:self checkFailedWithError:error];
+            
+        }
     }];
-    [_uploadWrapper upload];
-    
-
+    [_checkWrapper checkFile];
 }
+
+
 
 @end

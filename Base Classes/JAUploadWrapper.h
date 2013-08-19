@@ -38,7 +38,7 @@ typedef void (^JAUploadFailedBlock)(NSError *error);
 /*
  NSMutableDictionary *pathsDictionary - should contain objects with these keys:
  NSString *const JAFileUploadNameKey
- NSString *const JAFileUploadRemotePathKey
+ NSString *const JAFileUploadRemotePathKey - Array of NSStrings representing folder heirarchy
  NSString *const JAFileUploadPathIDKey
  NSString *const JAFileUploadLocalPathKey */
 @property (nonatomic,strong) NSMutableDictionary *pathsDictionary;
@@ -55,7 +55,7 @@ typedef void (^JAUploadFailedBlock)(NSError *error);
 
 /*
  Main constructor to use to set up a new uploader
- JADropboxFileUploadWrapper *uploader = [JADropboxFileUploader uploaderWithPaths:...
+ JAFileUploadWrapper *uploader = [JAFileUploader uploaderWithPaths:...
  */
 +(id)uploaderWithPaths:(NSMutableDictionary *)paths progress:(JAUploadProgressBlock)progBlock completed:(JAUploadCompletedBlock)compBlock failed:(JAUploadFailedBlock)failBlock;
 
@@ -66,7 +66,11 @@ typedef void (^JAUploadFailedBlock)(NSError *error);
  [uploader upload]; */
 -(void)upload;
 
-
+/*
+ Cancel current upload
+ Subclasses should override
+ */
+-(void)cancelUpload;
 
 
 @end

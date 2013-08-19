@@ -23,38 +23,30 @@
  THE SOFTWARE.
  */
 
-/*
- JADropboxFileCheckOperation.m
- */
+#import "JAFileCheckOperationGoogleDrive.h"
 
-#import "JADropboxFileCheckOperation.h"
-
-
-@interface JADropboxFileCheckOperation ()
-
-@end
-
-@implementation JADropboxFileCheckOperation
-
+@implementation JAFileCheckOperationGoogleDrive
+@synthesize checkWrapper;
 
 -(void)start {
     if (![NSThread isMainThread]) {
         [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
-        return;
     }
-    self.checkWrapper = [JADropboxFileCheckWrapper checkerWithPaths:self.itemToUpload completed:^(NSMutableDictionary *fileInfo) {
+    
+    self.checkWrapper = [JAFileCheckWrapperGoogleDrive checkerWithPaths:self.itemToUpload completed:^(NSMutableDictionary *fileInfo) {
+        
         if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFinishedWithInfo:)]) {
             [self.operationDelegate fileCheckOperation:self checkFinishedWithInfo:fileInfo];
         }
+        
     } failed:^(NSError *error) {
+        
         if ([self.operationDelegate respondsToSelector:@selector(fileCheckOperation:checkFailedWithError:)]) {
             [self.operationDelegate fileCheckOperation:self checkFailedWithError:error];
-            
         }
+        
     }];
-    [_checkWrapper checkFile];
+    [self.checkWrapper checkFile];
 }
-
-
 
 @end

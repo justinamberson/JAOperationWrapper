@@ -24,15 +24,14 @@
  */
 
 /*
- DropboxUploadOperation.h
+ JADropboxUploadWrapper.m
  */
 
-#import <Foundation/Foundation.h>
-#import "JADropboxUploadWrapper.h"
 #import "JAUploadOperation.h"
+#import "JAUploadWrapperGoogleDrive.h"
 
-@interface JADropboxUploadOperation : JAUploadOperation
+@interface JAUploadOperationGoogleDrive : JAUploadOperation
 
-@property (nonatomic,strong) JADropboxUploadWrapper *uploadWrapper;
+@property (nonatomic,strong) JAUploadWrapperGoogleDrive *uploadWrapper;
 
 @end
