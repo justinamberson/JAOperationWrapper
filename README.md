@@ -10,18 +10,22 @@ Support for writing subclasses is baked in. Currently all that is needed is to o
 
 For example, the included Dropbox subclass:
 
-    #import "JADropboxUploadWrapper.h"
+    #import "JAUploadWrapperDropbox.h"
 
     ...
 
 	/*  
 	    First Create an NSMutableDictionary with keys that represent the following items:
 	
-	    File's name as it will be represented on the service (song.mp3, resume.txt etc) 
-	    File's local path on the filesystem ( /Sandbox/Library/data.bin) 
-	    Intended remote path on the service ( /AppDirectory/Subdirectory) 
-	    File's "unique identifier" on the service. 
-	    Dropbox has a "parent revision" For instance, if the Dropbox parent revision is known, the file will be overwritten If the parent revision is unknown, a new file will be created (song (1).mp3) 
+	    1. File's name as it will be represented on the service (song.mp3, resume.txt etc) 
+	    2. File's local path on the filesystem ( /Sandbox/Library/data.bin) 
+	    3. Intended remote path on the service (NSArray of NSStrings for each folder)
+	    	ie: /MyCoolApp/Books/Classics/Jules Verne
+	    	==: [NSArray arrayWithObjects:@"MyCoolApp",@"Books",@"Classics",@"Jules Verne",nil]; 
+	    4. File's "unique identifier" on the service. 
+	    	Dropbox has a "parent revision" For instance, if the Dropbox parent revision is known, 
+	    	the file will be overwritten If the parent revision is unknown, a new file will be created (song (1).mp3) 
+	    	(The JAFileCheckWrapper subclasses facilitate finding this value for you)
 	
 	*/
 	
@@ -37,10 +41,13 @@ For example, the included Dropbox subclass:
 	
 	[fileRepresentation setObject:@"mySong.mp3" forKey:JAFileUploadNameKey];
 	[fileRepresentation setObject:@"/Path/To/Song/mySong.mp3" forKey:JAFileUploadLocalPathKey];
-	[fileRepresentation setObject:@"/Music/Songs" forKey:JAFileUploadRemotePathKey];
+	NSArray *remoteSongsPath = [NSArray arrayWithObjects:@"MyMusic",@"Music",@"Songs",nil];
+	[fileRepresentation setObject:remoteSongsPath forKey:JAFileUploadRemotePathKey];
+	//knownParentRev is optional and does not need to be set
+	//if it is not set and the file exists on Dropbox, a new file will be created
 	[fileRepresentation setObject:knownParentRev forKey:JAFileUploadPathIDKey];
 	
-	JADropboxUploadWrapper *wrapper = [JADropboxUploadWrapper uploaderWithPaths:fileRepresentation progress:^(NSMutableDictionary *uploadInfo) {
+	JAUploadWrapperDropbox *wrapper = [JAUploadWrapperDropbox uploaderWithPaths:fileRepresentation progress:^(NSMutableDictionary *uploadInfo) {
 			//Receive the submitted NSMutableDictionary again in this block. There will be an
 			//updated NSNumber object wrapping a CGFloat with a new progress value.
 			NSNumber *progress = [uploadInfo objectForKey:JAFileUploadPercentageKey]; 
@@ -62,8 +69,13 @@ For example, the included Dropbox subclass:
 
 ### To Do ###
 
-Currently the project only has support for Dropbox and Box.com. I'd like to include wrappers for Google Drive and SugarSync in the future. I encourage others to build and share their own subclasses back with the project.
+Currently the project only has support for Google Drive, Dropbox and Box.com. I'd like to 
+include wrappers for other popular services in the future. I encourage others to build and 
+share their own subclasses back with the project.
 
 ### Getting Started ###
 
-To get started, drag and drop the files you need to use into your project folder. Have XCode add groups for any folder references. Add them to your target. Copying to the project directory is not required. You have to set up SDKs for Dropbox and Box.com independently.
+To get started, drag and drop the files you need to use into your project folder. Have XCode
+ add groups for any folder references. Add them to your target. Copying to the project 
+ directory is not required. You have to set up SDKs for Dropbox, Box.com and Google
+ Drive independently.
