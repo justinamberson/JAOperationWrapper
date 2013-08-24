@@ -25,7 +25,8 @@
 /*
  JAOperationWrapperConstants.h
  */
-
+#pragma mark -
+#pragma mark Upload Keys
 /*
  JAFileUploadNameKey - Used to identify the name of the file as it will appear on
 the upload service, ie "autoexec.bat"
@@ -81,4 +82,59 @@ extern NSString *const JAFileUploadPercentageKey;
  service that is represented by an ID. Google Drive uses a File ID
  */
 extern NSString *const JAFileUploadFileIDKey;
+
+#pragma mark -
+#pragma mark Download Keys
+
+/*
+JAFileUploadNameKey - Used to identify the name of the file as it will appear on
+the upload service, ie "autoexec.bat"
+*/
+extern NSString *const JAFileDownloadNameKey;
+
+/*
+ JAFileUploadRemotePathKey - NSArray, with each NSString object representing a
+ folder in the path heirarchy. For example, if you were going to upload to this
+ path: /My Cool App/Books/Classics/Bram Stoker
+ You would need to set the array like so:
+ [NSArray arrayWithObjects:@"My Cool App",@"Books",@"Classics",@"Bram Stoker"]
+ */
+extern NSString *const JAFileDownloadRemotePathKey;
+
+/*
+ JAFileUploadLocalPathKey - Used to identify the full path of the local file
+ ie "/Users/home/music/track01.mp3"
+ */
+extern NSString *const JAFileDownloadLocalPathKey;
+
+/*
+ JAFileUploadDateKey - Used to reference the date that a given file was uploaded
+ to an online service
+ */
+extern NSString *const JAFileDownloadDateKey;
+
+/*
+ JAFileUploadServiceNameKey - Used to keep track of what service a file was
+ uploaded to, ie "Dropbox"
+ */
+extern NSString *const JAFileDownloadServiceNameKey;
+
+/*
+ JAFileUploadParentIDKey - Used to set and retrieve information about a file's parent
+ ie, Dropbox has a "parentRevision", Box.com has a "parent ID, Google Drive has a "parent ID"
+ */
+extern NSString *const JAFileDownloadPathIDKey;
+
+/*
+ JAFileUploadPercentageKey - Stores an NSNumber wrapped CGFloat denoting upload progress
+ */
+extern NSString *const JAFileDownloadPercentageKey;
+
+/*
+ JAFileUploadFileIDKey - Used to set and retrieve information about a file on a
+ service that is represented by an ID. Google Drive uses a File ID
+ */
+extern NSString *const JAFileDownloadFileIDKey;
+
+
 

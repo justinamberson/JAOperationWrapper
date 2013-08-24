@@ -63,8 +63,6 @@
         ref.identifier = parentID;
         file.parents = [NSArray arrayWithObject:ref];
     }
-    //NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingAtPath:localFilePath];
-    //GTLUploadParameters *uploadParameters = [GTLUploadParameters uploadParametersWithFileHandle:fileHandle MIMEType:@"audio/mp4"];
     
     NSData *fileData = [[NSData alloc]initWithContentsOfFile:localFilePath];
     

@@ -34,3 +34,12 @@ NSString *const JAFileUploadShareLinkKey = @"JAFileUploadShareLinkKey";
 NSString *const JAFileUploadDateKey = @"JAFileUploadDateKey";
 NSString *const JAFileUploadServiceNameKey = @"JAFileUploadServiceNameKey";
 NSString *const JAFileUploadPercentageKey = @"JAFileUploadPercentageKey";
+
+NSString *const JAFileDownloadNameKey = @"JAFileDownloadNameKey";
+NSString *const JAFileDownloadRemotePathKey = @"JAFileDownloadRemotePathKey";
+NSString *const JAFileDownloadLocalPathKey = @"JAFileDownloadLocalPathKey";
+NSString *const JAFileDownloadPathIDKey = @"JAFileDownloadPathIDKey";
+NSString *const JAFileDownloadFileIDKey = @"JAFileDownloadFileIDKey";
+NSString *const JAFileDownloadDateKey = @"JAFileDownloadDateKey";
+NSString *const JAFileDownloadServiceNameKey = @"JAFileDownloadServiceNameKey";
+NSString *const JAFileDownloadPercentageKey = @"JAFileDownloadPercentageKey";

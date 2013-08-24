@@ -29,6 +29,7 @@
 
 #import "JAFileCheckWrapperGoogleDrive.h"
 #import "GTMOAuth2ViewControllerTouch.h"
+#import "GTLDrive.h"
 
 #warning replace the following defines with your keys
 #define GOOGLE_DRIVE_CLIENT_ID Google_Drive_Client_ID
