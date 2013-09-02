@@ -83,7 +83,7 @@
                       if (error == nil)
                       {
                           NSDate *now = [NSDate date];
-                          NSLog(@"Inserted File: %@",insertedFile);
+                          [self.pathsDictionary setObject:@"Google Drive" forKey:JAFileUploadServiceNameKey];
                           [self.pathsDictionary setObject:now forKey:JAFileUploadDateKey];
                           [self.pathsDictionary setObject:insertedFile.identifier forKey:JAFileUploadFileIDKey];
                           self.completedBlock(self.pathsDictionary);

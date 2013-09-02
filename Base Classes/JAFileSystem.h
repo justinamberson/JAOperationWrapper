@@ -13,11 +13,14 @@ typedef void (^JAFileSystemFailedBlock)(NSError *error);
 
 @interface JAFileSystem : NSObject
 
-+(void)getFileSystemForPathComponents:(NSArray *)pathComponents
++(id)getFileSystemForPathComponents:(NSArray *)pathComponents
                           completed:(JAFileSystemCompletedBlock)completedBlock
                              failed:(JAFileSystemFailedBlock)failed;
 
 @property (nonatomic,copy) JAFileSystemCompletedBlock completionBlock;
 @property (nonatomic,copy) JAFileSystemFailedBlock failedBlock;
 @property (nonatomic,copy) NSArray *pathComponents;
+
+-(void)fetch;
+
 @end

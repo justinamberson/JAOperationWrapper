@@ -8,11 +8,13 @@
 
 #import "JAFileSystemDropbox.h"
 #import <DropboxSDK/DropboxSDK.h>
+#import "JAOperationWrapperConstants.h"
 
 @implementation JAFileSystemDropbox
 @synthesize dbClient;
 
 -(void)fetch {
+    NSLog(@"Fetch");
     self.dbClient = [[DBRestClient alloc]initWithSession:[DBSession sharedSession]];
     self.dbClient.delegate = self;
     
@@ -26,8 +28,20 @@
 }
 
 -(void)restClient:(DBRestClient *)client loadedMetadata:(DBMetadata *)metadata {
+    
     NSMutableArray *array = [NSMutableArray array];
-    [array addObject:@"Success!"];
+    
+	for (DBMetadata *child in metadata.contents) {
+		NSString *lastObject = [[child.path pathComponents]lastObject];
+		NSString *filePath = child.path;
+        NSDate *lastModifiedDate = child.lastModifiedDate;
+        NSMutableDictionary *appDict = [NSMutableDictionary dictionary];
+        [appDict setObject:lastModifiedDate forKey:JAFileDownloadDateKey];
+        [appDict setObject:lastObject forKey:JAFileDownloadNameKey];
+        [appDict setObject:filePath   forKey:JAFileDownloadRemotePathKey];
+        [array addObject:appDict];
+	}
+
     self.completionBlock(array);
 }
 

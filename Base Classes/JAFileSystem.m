@@ -11,7 +11,6 @@
 -(id)initWithPathComponents:(NSArray *)pathComponents
              completedBlock:(JAFileSystemCompletedBlock)completedBlock
                 failedBlock:(JAFileSystemFailedBlock)failBlock;
--(void)fetch;
 @end
 
 @implementation JAFileSystem
@@ -30,13 +29,14 @@
     return self;
 }
 
-+(void)getFileSystemForPathComponents:(NSArray *)pathComponents
++(id)getFileSystemForPathComponents:(NSArray *)pathComponents
                           completed:(JAFileSystemCompletedBlock)completedBlock
                              failed:(JAFileSystemFailedBlock)failed {
-    id class = [[[self class] alloc] initWithPathComponents:pathComponents
+    NSLog(@"Instantiate");
+    return [[[self class] alloc] initWithPathComponents:pathComponents
                                              completedBlock:completedBlock
                                                 failedBlock:failed];
-    [class fetch];
+    
     
 }
 
